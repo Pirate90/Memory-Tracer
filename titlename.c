@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void star(int* score,char* starr[21]);
+void star(int score,char* starr);
 
 int main(void)
 {
@@ -55,36 +55,21 @@ int main(void)
 								printf("0~10사이의 정수의 값을 다시 입력해주세요!");
 								scanf("%d", &story_score[count]);
 						}
-//						for(i=0; i<story_score[count]; i++) {
-//								strcat(story_star[count], "★");
-//						}
-//						for(i=0; i<10-story_score[count]; i++) {
-//								strcat(story_star[count], "☆");
-//						}
+						star(story_score[count], story_star[count]);
 						printf("음악 점수를를 입력하세요 (단, 0~10까지의 정수 입력) : ");
 						scanf("%d", &music_score[count]);
 						while(music_score[count]>10 || music_score[count]<0) {
 								printf("0~10사이의 정수의 값을 다시 입력해주세요!");
 								scanf("%d", &music_score[count]);
 						}
-//						for(i=0; i<music_score[count]; i++) {
-//								strcat(music_star[count], "★");
-//						}
-//						for(i=0; i<10-music_score[count]; i++) {
-//								strcat(music_star[count], "☆");
-//						}
+						star(music_score[count], music_star[count]);
 						printf("캐스팅 점수를 입력하세요 (단, 0~10까지의 정수 입력) : ");
 						scanf("%d", &casting_score[count]);
 						while(casting_score[count]>10 || casting_score[count]<0) {
 								printf("0~10사이의 정수의 값을 다시 입력해주세요!");
 								scanf("%d", &casting_score[count]);
 						}
-//						for(i=0; i<casting_score[count]; i++) {
-//								strcat(casting_star[count], "★");
-//						}
-//						for(i=0; i<10-casting_score[count]; i++) {
-//								strcat(casting_star[count], "☆");
-//						}
+						star(casting_score[count], casting_star[count]);
 						getchar();
 						printf("스토리를 입력하세요 (단, 한글 50자 이내) : ");
 						fgets(story[count], 101, stdin);
@@ -112,9 +97,6 @@ int main(void)
 				}
 				else if(user_choice == 2) {
 						for(i=0; i<count; i++) {
-								star(&story_score[i], story_star[i]);
-								star(&music_score[i], music_star[i]);
-								star(&casting_score[i], casting_star[i]);
 								printf("제목 : %s\t,장르 : %s\t,스토리점수 : %s\t,음악점수 : %s\t,그림체점수 : %s\t,스토리 : %s\t,느낀점 : %s\t\n",title[i],genre[i],story_star[i],music_star[i],casting_star[i],story[i],review[i]);
 						}
 				}
@@ -128,12 +110,12 @@ int main(void)
 		return 0;
 }
 
-void star(int* score,char* starr[21]) {
+void star(int score,char* starr) {
 	int i;
-	for(i=0; i<(*score); i++) {
-		strcat((*starr), "★");
+	for(i=0; i<score; i++) {
+		strcat(starr, "★");
 	}
-	for(i=0; i<10-(*score); i++) {
-		strcat((*starr), "☆");
+	for(i=0; i<10-score; i++) {
+		strcat(starr, "☆");
 	};
 }
