@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-char star(int* score,int count);
+void star(int* score,char* starr[21]);
 
 int main(void)
 {
@@ -11,7 +11,7 @@ int main(void)
 		int* pss = story_score;
 		int* pms = music_score;
 		int* pcs = casting_score;
-//		char story_star[10][21]={0,},music_star[10][21]={0,},casting_star[10][21]={0,};
+		char story_star[10][21]={0,},music_star[10][21]={0,},casting_star[10][21]={0,};
 		char story[10][101];
 		char review[10][1001];
 		char pic[10][5][100];
@@ -112,7 +112,10 @@ int main(void)
 				}
 				else if(user_choice == 2) {
 						for(i=0; i<count; i++) {
-								printf("제목 : %s\t,장르 : %s\t,스토리점수 : %s\t,음악점수 : %s\t,그림체점수 : %s\t,스토리 : %s\t,느낀점 : %s\t\n",title[i],genre[i],star(pss, i),star(pms, i),star(pcs, i),story[i],review[i]);
+								star(&story_score[i], story_star[i]);
+								star(&music_score[i], music_star[i]);
+								star(&casting_score[i], casting_star[i]);
+								printf("제목 : %s\t,장르 : %s\t,스토리점수 : %s\t,음악점수 : %s\t,그림체점수 : %s\t,스토리 : %s\t,느낀점 : %s\t\n",title[i],genre[i],story_star[i],music_star[i],casting_star[i],story[i],review[i]);
 						}
 				}
 				else if(user_choice == 3) {
@@ -125,14 +128,12 @@ int main(void)
 		return 0;
 }
 
-char star(int* score,int count) {
+void star(int* score,char* starr[21]) {
 	int i;
-	char star[21] = {0,};
-	for(i=0; i<score[count]; i++) {
-		strcat(star, "★");
+	for(i=0; i<(*score); i++) {
+		strcat((*starr), "★");
 	}
-	for(i=0; i<10-score[count]; i++) {
-		strcat(star, "☆");
-	}
-	return star[21];
+	for(i=0; i<10-(*score); i++) {
+		strcat((*starr), "☆");
+	};
 }
