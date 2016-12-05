@@ -3,32 +3,32 @@
 
 void star(int score,char* starr);
 
-int main(void)
-{
+int main(void) {
 		char title[10][21];
 		char genre[10][9];
 		int story_score[10],music_score[10],casting_score[10];
 		int* pss = story_score;
 		int* pms = music_score;
 		int* pcs = casting_score;
-		char story_star[10][30]={0,},music_star[10][30]={0,},casting_star[10][30]={0,};
+		char story_star[10][31]={0,},music_star[10][31]={0,},casting_star[10][31]={0,};
 		char story[10][101];
 		char review[10][1001];
 		char pic[10][5][100];
 		int user_choice;
 		int i;
-		int count;
+		int count = 0;
 
-		count = 0;
-				
-		FILE *fp = fopen("M_data.txt", "r");
+		FILE *fp = fopen("M_data.dat", "r");
 		if (fp != NULL) {
-				while(fgetc(fp) != EOF) {
-						fgets(title[count], 21, fp);
-						fgets(genre[count], 9, fp);
+				while(1) {
+						if(fgets(title[count], 21, fp) == NULL) break;
+						fscanf(fp, "%s\n", genre[count]);
 						fscanf(fp, "%d\n", &story_score[count]);
+						star(story_score[count], story_star[count]);
 						fscanf(fp, "%d\n", &music_score[count]);
+						star(music_score[count], music_star[count]);
 						fscanf(fp, "%d\n", &casting_score[count]);
+						star(casting_score[count], casting_star[count])
 						fgets(story[count], 101, fp);
 						fgets(review[count], 1001, fp);
 						count++;
@@ -37,7 +37,7 @@ int main(void)
 		}
 
 		while(1) {
-			printf("Memory Tracer에 오신것을 환영합니다.\n");
+				printf("Memory Tracer에 오신것을 환영합니다.\n");
 				printf("메뉴를 선택하세요.\n");
 				printf("1. 새로운 감상문 입력하기\n");
 				printf("2. 감상문목록 관리하기\n");
@@ -52,9 +52,7 @@ int main(void)
 						printf("제목을 입력하세요 (단, 한글 10자 이내) : ");
 						fgets(title[count], 21, stdin);
 						printf("장르를 입력하세요 (액션, SF, 멜로, 공포 중에서)) : ");
-						fgets(genre[count], 9, stdin);
-						genre[count][10 - 1] = '\0';
-						getchar();
+						scanf("%s", genre[count]);
 						printf("스토리 점수를 입력하세요 (단, 0~10까지의 정수 입력) : ");
 						scanf("%d", &story_score[count]);
 						while(story_score[count]>10 || story_score[count]<0) {
@@ -90,12 +88,11 @@ int main(void)
 						}
 						if(user_choice == 1) {
 								count ++;
-								FILE *fp = fopen("M_data.txt", "w");
-								
+								FILE *fp = fopen("M_data.dat", "w");
+
 								for(i=0; i < count; i++) {
-										fprintf(fp, "1");
 										fputs(title[i], fp);
-										fputs(genre[i], fp);
+										fprintf(fp, "%s\n", genre[i]);
 										fprintf(fp, "%d\n", story_score[i]);
 										fprintf(fp, "%d\n", music_score[i]);
 										fprintf(fp, "%d\n", casting_score[i]);
@@ -109,7 +106,7 @@ int main(void)
 				}
 				else if(user_choice == 2) {
 						for(i=0; i<count; i++) {
-								printf("제목 : %s\t,장르 : %s\t,스토리점수 : %d\t,음악점수 : %d\t,그림체점수 : %d\t,스토리 : %s\t,느낀점 : %s\t\n",title[i],genre[i],story_score[i],music_score[i],casting_score[i],story[i],review[i]);
+								printf("제목 : %s\t,장르 : %s\t,스토리점수 : %s\t,음악점수 : %s\t,그림체점수 : %s\t,스토리 : %s\t,느낀점 : %s\t\n",title[i],genre[i],story_star[i],music_star[i],casting_star[i],story[i],review[i]);
 						}
 				}
 				else if(user_choice == 3) {
@@ -123,11 +120,9 @@ int main(void)
 }
 
 void star(int score,char* starr) {
-	int i;
-	for(i=0; i<score; i++) {
-		strcat(starr, "★");
-	}
-	for(i=0; i<10-score; i++) {
-		strcat(starr, "☆");
-	};
+		int i;
+		for(i=0; i<score; i++)
+				strcat(starr, "★");
+		for(i=0; i<10-score; i++)
+			strcat(starr, "☆");
 }
