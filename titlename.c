@@ -1,15 +1,13 @@
 #include <stdio.h>
 #include <string.h>
 
+int insert_score(int* score, int count);
 void star(int score,char* starr);
 
 int main(void) {
 		char title[10][21];
 		char genre[10][9];
 		int story_score[10],music_score[10],casting_score[10];
-		int* pss = story_score;
-		int* pms = music_score;
-		int* pcs = casting_score;
 		char story_star[10][31]={0,},music_star[10][31]={0,},casting_star[10][31]={0,};
 		char story[10][101];
 		char review[10][1001];
@@ -28,7 +26,7 @@ int main(void) {
 						fscanf(fp, "%d\n", &music_score[count]);
 						star(music_score[count], music_star[count]);
 						fscanf(fp, "%d\n", &casting_score[count]);
-						star(casting_score[count], casting_star[count])
+						star(casting_score[count], casting_star[count]);
 						fgets(story[count], 101, fp);
 						fgets(review[count], 1001, fp);
 						count++;
@@ -54,25 +52,13 @@ int main(void) {
 						printf("장르를 입력하세요 (액션, SF, 멜로, 공포 중에서)) : ");
 						scanf("%s", genre[count]);
 						printf("스토리 점수를 입력하세요 (단, 0~10까지의 정수 입력) : ");
-						scanf("%d", &story_score[count]);
-						while(story_score[count]>10 || story_score[count]<0) {
-								printf("0~10사이의 정수의 값을 다시 입력해주세요!");
-								scanf("%d", &story_score[count]);
-						}
+						insert_score(story_score, count);
 						star(story_score[count], story_star[count]);
 						printf("음악 점수를를 입력하세요 (단, 0~10까지의 정수 입력) : ");
-						scanf("%d", &music_score[count]);
-						while(music_score[count]>10 || music_score[count]<0) {
-								printf("0~10사이의 정수의 값을 다시 입력해주세요!");
-								scanf("%d", &music_score[count]);
-						}
+						insert_score(music_score, count);
 						star(music_score[count], music_star[count]);
 						printf("캐스팅 점수를 입력하세요 (단, 0~10까지의 정수 입력) : ");
-						scanf("%d", &casting_score[count]);
-						while(casting_score[count]>10 || casting_score[count]<0) {
-								printf("0~10사이의 정수의 값을 다시 입력해주세요!");
-								scanf("%d", &casting_score[count]);
-						}
+						insert_score(casting_score, count);
 						star(casting_score[count], casting_star[count]);
 						getchar();
 						printf("스토리를 입력하세요 (단, 한글 50자 이내) : ");
@@ -119,10 +105,18 @@ int main(void) {
 		return 0;
 }
 
+int insert_score(int* score, int count) {
+		scanf("%d", &score[count]);
+		while(score[count] > 10 || score[count] < 0) {
+				printf("0~10사이의 정수의 값을 다시 입력해주세요!");
+				scanf("%d", &score[count]);
+		}
+}
+
 void star(int score,char* starr) {
 		int i;
 		for(i=0; i<score; i++)
 				strcat(starr, "★");
 		for(i=0; i<10-score; i++)
-			strcat(starr, "☆");
+				strcat(starr, "☆");
 }
