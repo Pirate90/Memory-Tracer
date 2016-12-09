@@ -35,6 +35,8 @@ void get_input_range(int* input, int max_r, int min_r);
 void print_reviewtable(REVIEW_TABLE* rt);
 void sort(REVIEW_TABLE* rt, int da, int n);
 void swap(REVIEW *first, REVIEW *second);
+void same(REVIEW_TABLE* rt, int n, char* g, int s);
+void print_sametable(REVIEW* a, int index);
 void print_selectreview(REVIEW* a);
 void print_star(int score);
 int count_korean_char(char* s);
@@ -53,12 +55,14 @@ int main(int argc, char* argv[]) {
 		int i;
 		int count = 0;
 		char file_location[80];
+		char s_genre[GENRE_BYTE];
+		int s_score;
 
 		if (argc == 1)		
 				strcpy(file_location, "M_data.dat");
 		else 
 				strcpy(file_location, argv[1]);
-		
+
 		fp = fopen(file_location, "rb");
 
 		if (fp != NULL) {
@@ -85,33 +89,34 @@ int main(int argc, char* argv[]) {
 				if(user_choice == 1) { //감상문 입력페이지 - 1.1
 						printf("1. 영화감상문 입력\n2. 애니메이션 감상문 입력\n");
 						get_input_range(&user_choice, 2, 1);
+
 						if(user_choice == 1)
-							sel = &m;
+								sel = &m;
 						else
-							sel = &a;
+								sel = &a;
+						REVIEW* mar = fc(sel);
 
-						if (user_choice == 1) {
-								fc(sel)->number = sel->count + 1;
-								printf("제목을 입력하세요 (단, 한글 10자 이내) : ");
-								fgets(fc(sel)->title, TITLE_BYTE, stdin);
-								fc(sel)->title[strlen(fc(sel)->title) - 1] = '\0';
-								printf("장르를 입력하세요 (액션, SF, 멜로, 공포 중에서)) : ");
-								scanf("%s", fc(sel)->genre);
-								printf("스토리 점수를 입력하세요 (단, 0~10까지의 정수 입력) : ");
-								get_input_range(&(fc(sel)->story_score), 10, 0);
-								printf("음악 점수를를 입력하세요 (단, 0~10까지의 정수 입력) : ");
-								get_input_range(&(fc(sel)->music_score), 10, 0);
-								printf("캐스팅 점수를 입력하세요 (단, 0~10까지의 정수 입력) : ");
-								get_input_range(&(fc(sel)->casting_score), 10, 0);
-								printf("스토리를 입력하세요 (단, 한글 50자 이내) : ");
-								fgets(fc(sel)->story, STORY_BYTE, stdin);
-								printf("느낀점을 입력하세요 (단, 한글 500자 이내) : ");
-								fgets(fc(sel)->review, REVIEW_BYTE, stdin);
-								fc(sel)->timer = time(NULL);
+						mar->number = sel->count + 1;
+						printf("제목을 입력하세요 (단, 한글 10자 이내) : ");
+						fgets(mar->title, TITLE_BYTE, stdin);
+						mar->title[strlen(mar->title) - 1] = '\0';
+						printf("장르를 입력하세요 (액션, SF, 멜로, 공포 중에서) : ");
+						scanf("%s", mar->genre);
+						printf("스토리 점수를 입력하세요 (단, 0~10까지의 정수 입력) : ");
+						get_input_range(&(mar->story_score), 10, 0);
+						printf("음악 점수를를 입력하세요 (단, 0~10까지의 정수 입력) : ");
+						get_input_range(&(mar->music_score), 10, 0);
+						printf("캐스팅 점수를 입력하세요 (단, 0~10까지의 정수 입력) : ");
+						get_input_range(&(mar->casting_score), 10, 0);
+						printf("스토리를 입력하세요 (단, 한글 50자 이내) : ");
+						fgets(mar->story, STORY_BYTE, stdin);
+						printf("느낀점을 입력하세요 (단, 한글 500자 이내) : ");
+						fgets(mar->review, REVIEW_BYTE, stdin);
+						mar->timer = time(NULL);
 
-								printf("입력이 완료되었습니다.\n 1.저장하겠습니다.\n 2.취소하겠습니다.");
-								get_input_range(&user_choice, 2, 1);
-				
+						printf("입력이 완료되었습니다.\n 1. 저장하겠습니다.\n 2. 취소하겠습니다.");
+						get_input_range(&user_choice, 2, 1);
+
 						if(user_choice == 1) {
 								sel->count++;
 								write_to_file(file_location, &m, &a);
@@ -164,82 +169,98 @@ int main(int argc, char* argv[]) {
 														get_input_range(&user_choice, 2, 1);
 														if (user_choice == 1) {
 																sort(sel, 0, 1);
-														        print_reviewtable(sel);
+																print_reviewtable(sel);
 														}
 														else if (user_choice == 2) {
-														        sort(sel, 1, 1);
-														        print_reviewtable(sel);
+																sort(sel, 1, 1);
+																print_reviewtable(sel);
 														}
 												}
 												else if (user_choice == 3) {
 														printf("장르를 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
 														get_input_range(&user_choice, 2, 1);
 														if (user_choice == 1) {
-														        sort(sel, 0, 2);
-														        print_reviewtable(sel);
+																sort(sel, 0, 2);
+																print_reviewtable(sel);
 														}
 														else if (user_choice == 2) {
-														        sort(sel, 1, 2);
-														        print_reviewtable(sel);
+																sort(sel, 1, 2);
+																print_reviewtable(sel);
 														}
 												}
 												else if (user_choice == 4) {
-														printf("스토리점수를 기준으로 정렬합니다.\n1. 내림차순\n2.오름차순\n");
+														printf("스토리점수를 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
 														get_input_range(&user_choice, 2, 1);
 														if (user_choice == 1) {
 																sort(sel, 0, 3);
-														        print_reviewtable(sel);
+																print_reviewtable(sel);
 														}
 														else if (user_choice == 2) {
-														        sort(sel, 1, 3);
-														        print_reviewtable(sel);
+																sort(sel, 1, 3);
+																print_reviewtable(sel);
 														}
 												}
 												else if (user_choice == 5) {
 														printf("음악점수를 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
 														get_input_range(&user_choice, 2, 1);
 														if (user_choice == 1) {
-														        sort(sel, 0, 4);
-														        print_reviewtable(sel);
+																sort(sel, 0, 4);
+																print_reviewtable(sel);
 														}
 														else if (user_choice == 2) {
 																sort(sel, 1, 4);
-														        print_reviewtable(sel);
+																print_reviewtable(sel);
 														}
 												}
 												else if (user_choice == 6) {
 														printf("캐스팅점수를 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
 														get_input_range(&user_choice, 2, 1);
 														if (user_choice == 1) {
-														        sort(sel, 0, 5);
-														        print_reviewtable(sel);
+																sort(sel, 0, 5);
+																print_reviewtable(sel);
 														}
 														else if (user_choice == 2) {
-														        sort(sel, 1, 5);
-														        print_reviewtable(sel);
+																sort(sel, 1, 5);
+																print_reviewtable(sel);
 														}
 												}
 												else if (user_choice == 7) {
 														printf("저장날짜를 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
 														get_input_range(&user_choice, 2, 1);
 														if (user_choice == 1) {
-														        sort(sel, 0, 6);
-														        print_reviewtable(sel);
+																sort(sel, 0, 6);
+																print_reviewtable(sel);
 														}
 														else if (user_choice == 2) {
-														        sort(sel, 1, 6);
-														        print_reviewtable(sel);
+																sort(sel, 1, 6);
+																print_reviewtable(sel);
 														}
 												}
 										}
 										else if (user_choice == 2) {
 												printf("같은 값으로 모아볼 항목을 적어주세요.\n");
-												printf("1. 장르\n2.스토리점수\n3.음악점수\n4.캐스팅점수\n");
+												printf("1. 장르\n2. 스토리점수\n3. 음악점수\n4. 캐스팅점수\n");
 												get_input_range(&user_choice, 4, 1);
-												if (user_choice == 1) {}
-												else if (user_choice == 2) {}
-												else if (user_choice == 3) {}
-												else if (user_choice == 4) {}
+												if (user_choice == 1) {
+														printf("모아 볼 장르를 적어주세요.\n");
+														scanf("%s", s_genre);
+														same(sel, 0, s_genre, s_score);
+												}
+												else if (user_choice == 2) {
+														printf("모아 볼 스토리점수를 적어주세요.\n");
+														scanf("%d", &s_score);
+														same(sel, 1, s_genre, s_score);
+												}
+												else if (user_choice == 3) {
+														printf("모아 볼 음악점수를 적어주세요.\n");
+														scanf("%d", &s_score);
+														same(sel, 2, s_genre, s_score);
+												}
+												else if (user_choice == 4) {
+														printf("모아 볼 캐스팅점수를 적어주세요.\n");
+														scanf("%d", &s_score);
+														same(sel, 3, s_genre, s_score);
+												}
 										}
 								}
 								else if (user_choice == 2) { //선택감상문 보는페이지 - 1.2.2 
@@ -279,7 +300,7 @@ int main(int argc, char* argv[]) {
 										fgets(temp.review, REVIEW_BYTE, stdin);
 										temp.timer = time(NULL);
 
-										printf("입력이 완료되었습니다.\n1.저장하겠습니다.\n2.취소하겠습니다.");
+										printf("입력이 완료되었습니다.\n1. 저장하겠습니다.\n2. 취소하겠습니다.");
 										get_input_range(&i, 2, 1);
 
 										if(i == 1) {
@@ -295,7 +316,7 @@ int main(int argc, char* argv[]) {
 										printf("삭제하고 싶은 감상문의 번호를 적어주세요.\n");
 										get_input_range(&user_choice, sel->count, 1);
 										REVIEW* ucr = fi(sel, user_choice);
-										printf("%s를 선택하셨습니다.\n1. 삭제하겠습니다.\n2. 취소하겠습니다.", (ucr-1)->title);
+										printf("%s을(를) 선택하셨습니다.\n1. 삭제하겠습니다.\n2. 취소하겠습니다.", (ucr-1)->title);
 										get_input_range(&i, 2, 1);
 
 										if(i == 1) {
@@ -304,7 +325,6 @@ int main(int argc, char* argv[]) {
 														(ucr-1+i)->number = (ucr-1+i)->number - 1;
 												}
 												sel->count --;
-
 												write_to_file(file_location, &m, &a);
 										}
 										else if(i == 2) {	
@@ -352,7 +372,7 @@ void print_reviewtable(REVIEW_TABLE* rt) { //감상문테이블을 화면으로 
 		REVIEW* a = rt->t;
 
 		printf("\n|%-8s|%-22s|%-10s|%-15s|%-14s|%-15s|%s\n","번호","제목","장르","스토리점수","음악점수","캐스팅점수","저장날짜");
-	
+
 		for(i=0; i<count; i++) {
 				sprintf(buf, "|%%-6d|%%-%ds|%%-%ds|", format_width_count(a[i].title, KOREAN_WIDTH * TITLE_LENGTH), format_width_count(a[i].genre, KOREAN_WIDTH * GENRE_LENGTH));
 				printf(buf,a[i].number,a[i].title,a[i].genre);
@@ -374,147 +394,201 @@ void sort(REVIEW_TABLE* rt, int da, int n) {
 		int i, j;
 
 		switch (da) {
-		case 0://내림차순
-				switch (n) {
-				case 0:
-						for (i=0; i<count; i++) {
-								for (j=0; j<count-1; j++) {
-										if (a[j].number < a[j+1].number) {
-												swap(&a[j],&a[j+1]);
+				case 0://내림차순
+						switch (n) {
+								case 0:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (a[j].number < a[j+1].number) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
 										}
-								}
-						}
-						break;
-				case 1:
-						for (i=0; i<count; i++) {
-						        for (j=0; j<count-1; j++) {
-						                if (strcmp(a[j].title, a[j+1].title) < 0) {
-						                        swap(&a[j],&a[j+1]);
-				                        }
-				                }
-				        }
-						break;
-				case 2:
-						for (i=0; i<count; i++) {
-						        for (j=0; j<count-1; j++) {
-				 		               if (strcmp(a[j].genre, a[j+1].genre) < 0) {
-						                       swap(&a[j],&a[j+1]);
-				                       }
-				                }
-				        }
-				        break;
-				case 3:
-						for (i=0; i<count; i++) {
-								for (j=0; j<count-1; j++) {
-										if (a[j].story_score < a[j+1].story_score) {
-												swap(&a[j],&a[j+1]);
+										break;
+								case 1:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (strcmp(a[j].title, a[j+1].title) < 0) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
 										}
-								}
-						}
-						break;
-				case 4:
-						for (i=0; i<count; i++) {
-								for (j=0; j<count-1; j++) {
-										if (a[j].music_score < a[j+1].music_score) {
-												swap(&a[j],&a[j+1]);
+										break;
+								case 2:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (strcmp(a[j].genre, a[j+1].genre) < 0) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
 										}
-								}
-						}
-						break;
-				case 5:
-						for (i=0; i<count; i++) {
-								for (j=0; j<count-1; j++) {
-										if (a[j].casting_score < a[j+1].casting_score) {
-												swap(&a[j],&a[j+1]);
+										break;
+								case 3:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (a[j].story_score < a[j+1].story_score) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
 										}
-								}
-						}
-						break;
-				case 6:
-						for (i=0; i<count; i++) {
-								for (j=0; j<count-1; j++) {
-										if (a[j].timer < a[j+1].timer) {
-												swap(&a[j],&a[j+1]);
+										break;
+								case 4:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (a[j].music_score < a[j+1].music_score) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
 										}
-								}
-						}
-						break;
-				}
-				break;
-		case 1://오름차순
-				switch (n) {
-				case 0:
-						for (i=0; i<count; i++) {
-								for (j=0; j<count-1; j++) {
-										if (a[j].number > a[j+1].number) {
-												swap(&a[j],&a[j+1]);
-				                		}
-								}
-						}
-						break;
-				case 1:
-						for (i=0; i<count; i++) {
-						        for (j=0; j<count-1; j++) {
-						                if (strcmp(a[j].title, a[j+1].title) > 0) {
-						                        swap(&a[j],&a[j+1]);
-				                        }
-				                }
-				        }break;
-				case 2:
-						for (i=0; i<count; i++) {
-						        for (j=0; j<count-1; j++) {
-			    						if (strcmp(a[j].genre, a[j+1].genre) > 0) {
-						                        swap(&a[j],&a[j+1]);
-				                        }
-				                }
-				        }break;
-				case 3:
-						for (i=0; i<count; i++) {
-								for (j=0; j<count-1; j++) {
-										if (a[j].story_score > a[j+1].story_score) {
-												swap(&a[j],&a[j+1]);
+										break;
+								case 5:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (a[j].casting_score < a[j+1].casting_score) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
 										}
-								}
-						}
-						break;
-				case 4:
-						for (i=0; i<count; i++) {
-								for (j=0; j<count-1; j++) {
-										if (a[j].music_score > a[j+1].music_score) {
-												swap(&a[j],&a[j+1]);
+										break;
+								case 6:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (a[j].timer < a[j+1].timer) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
 										}
-								}
+										break;
 						}
 						break;
-				case 5:
-						for (i=0; i<count; i++) {
-								for (j=0; j<count-1; j++) {
-										if (a[j].casting_score > a[j+1].casting_score) {
-												swap(&a[j],&a[j+1]);
+				case 1://오름차순
+						switch (n) {
+								case 0:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (a[j].number > a[j+1].number) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
 										}
-								}
-						}
-						break;
-				case 6:
-						for (i=0; i<count; i++) {
-								for (j=0; j<count-1; j++) {
-										if (a[j].timer > a[j+1].timer) {
-												swap(&a[j],&a[j+1]);
+										break;
+								case 1:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (strcmp(a[j].title, a[j+1].title) > 0) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
+										}break;
+								case 2:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (strcmp(a[j].genre, a[j+1].genre) > 0) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
+										}break;
+								case 3:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (a[j].story_score > a[j+1].story_score) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
 										}
-								}
+										break;
+								case 4:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (a[j].music_score > a[j+1].music_score) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
+										}
+										break;
+								case 5:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (a[j].casting_score > a[j+1].casting_score) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
+										}
+										break;
+								case 6:
+										for (i=0; i<count; i++) {
+												for (j=0; j<count-1; j++) {
+														if (a[j].timer > a[j+1].timer) {
+																swap(&a[j],&a[j+1]);
+														}
+												}
+										}
+										break;
 						}
 						break;
-				}
-				break;
 		}
 
 }								
 
 void swap(REVIEW *first, REVIEW *second) { 
 		REVIEW tmp;
-	    tmp = *first; 
+		tmp = *first; 
 		*first = *second; 
 		*second = tmp; 
+}
+
+void same(REVIEW_TABLE* rt, int n, char* g, int s) {
+		int count = rt->count;
+		REVIEW* a = rt->t;
+		int i;
+		printf("\n|%-8s|%-22s|%-10s|%-15s|%-14s|%-15s|%s\n","번호","제목","장르","스토리점수","음악점수","캐스팅점수","저장날짜");
+		switch (n) {
+				case 0:
+						for (i=0; i<count; i++) {
+								if (strcmp(g, a[i].genre) == 0) {
+										print_sametable(a, i);
+								}
+						}
+						break;
+				case 1:
+						for (i=0; i<count; i++) {
+								if (s == a[i].story_score) {
+										print_sametable(a, i);
+								}
+						}
+						break;
+				case 2:
+						for (i=0; i<count; i++) {
+								if (s == a[i].music_score) {
+										print_sametable(a, i);
+								}
+						}
+						break;
+				case 3:
+						for (i=0; i<count; i++) {
+								if (s == a[i].casting_score) {
+										print_sametable(a, i);
+								}
+						}
+						break;
+		}
+		printf("\n");
+}
+
+void print_sametable(REVIEW* a, int index) { //감상문테이블을 화면으로 출력하는 함수
+		struct tm* t;
+		char buf[100];
+		
+		sprintf(buf, "|%%-6d|%%-%ds|%%-%ds|", format_width_count(a[index].title, KOREAN_WIDTH * TITLE_LENGTH), format_width_count(a[index].genre, KOREAN_WIDTH * GENRE_LENGTH));
+		printf(buf,a[index].number,a[index].title,a[index].genre);
+		print_star(a[index].story_score);
+		printf("%s", "|");
+		print_star(a[index].music_score);
+		printf("%s", "|");
+		print_star(a[index].casting_score);
+		printf("%s", "|");
+		t = localtime(&(a[index].timer));
+		printf("%s\n", timeToString(t));
 }
 
 void print_selectreview(REVIEW* a) { //특정감상문의 자세한 내용을 화면으로 출력하는 함수
@@ -563,6 +637,7 @@ REVIEW* fi(REVIEW_TABLE* rt, int index) {
 }
 
 void write_to_file(char* file_location, REVIEW_TABLE* m, REVIEW_TABLE* a) {
+		FILE *fp;
 		fp = fopen(file_location, "wb");
 
 		fwrite(&(m->count), sizeof(int), 1, fp);
