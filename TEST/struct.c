@@ -27,16 +27,28 @@ typedef struct REVIEW {
 
 typedef struct REVIEW_TABLE {
 		int count;
-		struct REVIEW t[10];
+		struct REVIEW t[AN];
 } REVIEW_TABLE;
 
 char* timeToString(struct tm* t);
 void get_input_range(int* input, int max_r, int min_r);
 void print_reviewtable(REVIEW_TABLE* rt);
-void sort(REVIEW_TABLE* rt, int da, int n);
-void swap(REVIEW *first, REVIEW *second);
+int sort_by_number_desc(void*, void*);
+int sort_by_title_desc(void*, void*);
+int sort_by_genre_desc(void*, void*);
+int sort_by_story_score_desc(void*, void*);
+int sort_by_music_score_desc(void*, void*);
+int sort_by_casting_score_desc(void*, void*);
+int sort_by_timer_desc(void*, void*);
+int sort_by_number_asc(void*, void*);
+int sort_by_title_asc(void*, void*);
+int sort_by_genre_asc(void*, void*);
+int sort_by_story_score_asc(void*, void*);
+int sort_by_music_score_asc(void*, void*);
+int sort_by_casting_score_asc(void*, void*);
+int sort_by_timer_asc(void*, void*);
 void same(REVIEW_TABLE* rt, int n, char* g, int s);
-void print_sametable(REVIEW* a, int index);
+void print_review(REVIEW* a, int index);
 void print_selectreview(REVIEW* a);
 void print_star(int score);
 int count_korean_char(char* s);
@@ -51,13 +63,16 @@ int main(int argc, char* argv[]) {
 		REVIEW_TABLE* sel;
 		int sorted_m[AN];
 		FILE *fp;
-		int user_choice;
+		int user_choice, user_choice2;
 		int i;
 		int count = 0;
 		char file_location[80];
 		char s_genre[GENRE_BYTE];
 		int s_score;
 
+		int (*sort_method_array[2][7])(void*, void*) = {{sort_by_number_desc, sort_by_title_desc, sort_by_genre_desc, sort_by_story_score_desc, sort_by_music_score_desc, sort_by_casting_score_desc, sort_by_timer_desc}, {sort_by_number_asc, sort_by_title_asc, sort_by_genre_asc, sort_by_story_score_asc, sort_by_music_score_asc, sort_by_casting_score_asc, sort_by_timer_asc}};
+		char user_criteria[7][20] = {"번호", "제목", "장르", "스토리점수", "음악점수", "캐스팅점수", "저장날짜"};
+		
 		if (argc == 1)		
 				strcpy(file_location, "M_data.dat");
 		else 
@@ -132,7 +147,7 @@ int main(int argc, char* argv[]) {
 						else
 								sel = &a;
 
-						sort(sel, 1, 0);
+						qsort((void*)sel->t, sel->count, sizeof(REVIEW), sort_method_array[1][0]);
 						print_reviewtable(sel);
 						while(1) {
 								printf("1. 감상문 목록 정렬\n");
@@ -152,90 +167,10 @@ int main(int argc, char* argv[]) {
 												printf("기준으로 정렬할 항목을 적어주세요.\n");
 												printf("1. 번호\n2. 제목\n3. 장르\n4. 스토리점수\n5. 음악점수\n6. 캐스팅점수\n7. 저장날짜\n");
 												get_input_range(&user_choice, 7, 1);
-												if (user_choice == 1) {
-														printf("번호를 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
-														get_input_range(&user_choice, 2, 1);
-														if (user_choice == 1) {
-																sort(sel, 0, 0);
-																print_reviewtable(sel);
-														}
-														else if (user_choice == 2) {
-																sort(sel, 1, 0); 
-																print_reviewtable(sel);
-														}
-												}
-												else if (user_choice == 2) {
-														printf("제목을 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
-														get_input_range(&user_choice, 2, 1);
-														if (user_choice == 1) {
-																sort(sel, 0, 1);
-																print_reviewtable(sel);
-														}
-														else if (user_choice == 2) {
-																sort(sel, 1, 1);
-																print_reviewtable(sel);
-														}
-												}
-												else if (user_choice == 3) {
-														printf("장르를 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
-														get_input_range(&user_choice, 2, 1);
-														if (user_choice == 1) {
-																sort(sel, 0, 2);
-																print_reviewtable(sel);
-														}
-														else if (user_choice == 2) {
-																sort(sel, 1, 2);
-																print_reviewtable(sel);
-														}
-												}
-												else if (user_choice == 4) {
-														printf("스토리점수를 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
-														get_input_range(&user_choice, 2, 1);
-														if (user_choice == 1) {
-																sort(sel, 0, 3);
-																print_reviewtable(sel);
-														}
-														else if (user_choice == 2) {
-																sort(sel, 1, 3);
-																print_reviewtable(sel);
-														}
-												}
-												else if (user_choice == 5) {
-														printf("음악점수를 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
-														get_input_range(&user_choice, 2, 1);
-														if (user_choice == 1) {
-																sort(sel, 0, 4);
-																print_reviewtable(sel);
-														}
-														else if (user_choice == 2) {
-																sort(sel, 1, 4);
-																print_reviewtable(sel);
-														}
-												}
-												else if (user_choice == 6) {
-														printf("캐스팅점수를 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
-														get_input_range(&user_choice, 2, 1);
-														if (user_choice == 1) {
-																sort(sel, 0, 5);
-																print_reviewtable(sel);
-														}
-														else if (user_choice == 2) {
-																sort(sel, 1, 5);
-																print_reviewtable(sel);
-														}
-												}
-												else if (user_choice == 7) {
-														printf("저장날짜를 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n");
-														get_input_range(&user_choice, 2, 1);
-														if (user_choice == 1) {
-																sort(sel, 0, 6);
-																print_reviewtable(sel);
-														}
-														else if (user_choice == 2) {
-																sort(sel, 1, 6);
-																print_reviewtable(sel);
-														}
-												}
+												printf("%s을(를) 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n", user_criteria[user_choice-1]);
+												get_input_range(&user_choice2, 2, 1);
+												qsort((void*)sel->t, sel->count, sizeof(REVIEW), sort_method_array[user_choice2-1][user_choice-1]);
+												print_reviewtable(sel);
 										}
 										else if (user_choice == 2) {
 												printf("같은 값으로 모아볼 항목을 적어주세요.\n");
@@ -264,7 +199,7 @@ int main(int argc, char* argv[]) {
 										}
 								}
 								else if (user_choice == 2) { //선택감상문 보는페이지 - 1.2.2 
-										sort(sel, 1, 0);
+										qsort((void*)sel->t, sel->count, sizeof(REVIEW), sort_method_array[1][0]);
 										printf("자세히 보고 싶은 감상문의 번호를 적어주세요.\n");
 										get_input_range(&user_choice, sel->count, 1);
 										user_choice = user_choice - 1;
@@ -277,7 +212,7 @@ int main(int argc, char* argv[]) {
 										else if (user_choice == 2) break;
 								}
 								else if (user_choice == 3) { //선택감상문 편집페이지 - 1.2.3
-										sort(sel, 1, 0);
+										qsort((void*)sel->t, sel->count, sizeof(REVIEW), sort_method_array[1][0]);
 										printf("편집하고 싶은 감상문의 번호를 적어주세요.\n");
 										get_input_range(&user_choice, sel->count, 1);
 										temp.number = user_choice;
@@ -312,7 +247,7 @@ int main(int argc, char* argv[]) {
 										print_reviewtable(sel);
 								}
 								else if (user_choice == 4) { //선택감상문 삭제페이지 - 1.2.4
-										sort(sel, 1, 0);
+										qsort((void*)sel->t, sel->count, sizeof(REVIEW), sort_method_array[1][0]);
 										printf("삭제하고 싶은 감상문의 번호를 적어주세요.\n");
 										get_input_range(&user_choice, sel->count, 1);
 										REVIEW* ucr = fi(sel, user_choice);
@@ -388,153 +323,60 @@ void print_reviewtable(REVIEW_TABLE* rt) { //감상문테이블을 화면으로 
 		printf("\n");
 }
 
-void sort(REVIEW_TABLE* rt, int da, int n) {
-		int count = rt->count;
-		REVIEW* a = rt->t;
-		int i, j;
+int sort_by_number_desc(void* a, void* b) {
+	return ((REVIEW*)a)->number < ((REVIEW*)b)->number;
+}
 
-		switch (da) {
-				case 0://내림차순
-						switch (n) {
-								case 0:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (a[j].number < a[j+1].number) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-								case 1:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (strcmp(a[j].title, a[j+1].title) < 0) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-								case 2:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (strcmp(a[j].genre, a[j+1].genre) < 0) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-								case 3:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (a[j].story_score < a[j+1].story_score) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-								case 4:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (a[j].music_score < a[j+1].music_score) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-								case 5:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (a[j].casting_score < a[j+1].casting_score) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-								case 6:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (a[j].timer < a[j+1].timer) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-						}
-						break;
-				case 1://오름차순
-						switch (n) {
-								case 0:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (a[j].number > a[j+1].number) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-								case 1:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (strcmp(a[j].title, a[j+1].title) > 0) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}break;
-								case 2:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (strcmp(a[j].genre, a[j+1].genre) > 0) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}break;
-								case 3:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (a[j].story_score > a[j+1].story_score) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-								case 4:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (a[j].music_score > a[j+1].music_score) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-								case 5:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (a[j].casting_score > a[j+1].casting_score) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-								case 6:
-										for (i=0; i<count; i++) {
-												for (j=0; j<count-1; j++) {
-														if (a[j].timer > a[j+1].timer) {
-																swap(&a[j],&a[j+1]);
-														}
-												}
-										}
-										break;
-						}
-						break;
-		}
+int sort_by_title_desc(void* a, void* b) {
+	return strcmp(((REVIEW*)a)->title, ((REVIEW*)b)->title) < 0;
+}
 
-}								
+int sort_by_genre_desc(void* a, void* b) {
+	return strcmp(((REVIEW*)a)->genre, ((REVIEW*)b)->genre) < 0;
+}
 
-void swap(REVIEW *first, REVIEW *second) { 
-		REVIEW tmp;
-		tmp = *first; 
-		*first = *second; 
-		*second = tmp; 
+int sort_by_story_score_desc(void* a, void* b) {
+	return ((REVIEW*)a)->story_score < ((REVIEW*)b)->story_score;
+}
+
+int sort_by_music_score_desc(void* a, void* b) {
+	return ((REVIEW*)a)->music_score < ((REVIEW*)b)->music_score;
+}
+
+int sort_by_casting_score_desc(void* a, void* b) {
+	return ((REVIEW*)a)->casting_score < ((REVIEW*)b)->casting_score;
+}
+
+int sort_by_timer_desc(void* a, void* b) {
+	return ((REVIEW*)a)->timer < ((REVIEW*)b)->timer;
+}
+
+int sort_by_number_asc(void* a, void* b) {
+	return ((REVIEW*)a)->number > ((REVIEW*)b)->number;
+}
+
+int sort_by_title_asc(void* a, void* b) {
+	return strcmp(((REVIEW*)a)->title, ((REVIEW*)b)->title) > 0;
+}
+
+int sort_by_genre_asc(void* a, void* b) {
+	return strcmp(((REVIEW*)a)->genre, ((REVIEW*)b)->genre) > 0;
+}
+
+int sort_by_story_score_asc(void* a, void* b) {
+	return ((REVIEW*)a)->story_score > ((REVIEW*)b)->story_score;
+}
+
+int sort_by_music_score_asc(void* a, void* b) {
+	return ((REVIEW*)a)->music_score > ((REVIEW*)b)->music_score;
+}
+
+int sort_by_casting_score_asc(void* a, void* b) {
+	return ((REVIEW*)a)->casting_score > ((REVIEW*)b)->casting_score;
+}
+
+int sort_by_timer_asc(void* a, void* b) {
+	return ((REVIEW*)a)->timer > ((REVIEW*)b)->timer;
 }
 
 void same(REVIEW_TABLE* rt, int n, char* g, int s) {
@@ -546,28 +388,28 @@ void same(REVIEW_TABLE* rt, int n, char* g, int s) {
 				case 0:
 						for (i=0; i<count; i++) {
 								if (strcmp(g, a[i].genre) == 0) {
-										print_sametable(a, i);
+										print_review(a, i);
 								}
 						}
 						break;
 				case 1:
 						for (i=0; i<count; i++) {
 								if (s == a[i].story_score) {
-										print_sametable(a, i);
+										print_review(a, i);
 								}
 						}
 						break;
 				case 2:
 						for (i=0; i<count; i++) {
 								if (s == a[i].music_score) {
-										print_sametable(a, i);
+										print_review(a, i);
 								}
 						}
 						break;
 				case 3:
 						for (i=0; i<count; i++) {
 								if (s == a[i].casting_score) {
-										print_sametable(a, i);
+										print_review(a, i);
 								}
 						}
 						break;
@@ -575,7 +417,7 @@ void same(REVIEW_TABLE* rt, int n, char* g, int s) {
 		printf("\n");
 }
 
-void print_sametable(REVIEW* a, int index) { //감상문테이블을 화면으로 출력하는 함수
+void print_review(REVIEW* a, int index) { //감상문테이블을 화면으로 출력하는 함수
 		struct tm* t;
 		char buf[100];
 		
