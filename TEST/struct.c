@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <time.h>
-#define AN 10//Array Number
 #define KOREAN_WIDTH 2
 #define KOREAN_BYTE 3
 #define TITLE_LENGTH 10
@@ -27,26 +27,26 @@ typedef struct REVIEW {
 
 typedef struct REVIEW_TABLE {
 		int count;
-		struct REVIEW t[AN];
+		struct REVIEW* t;
 } REVIEW_TABLE;
 
 char* timeToString(struct tm* t);
 void get_input_range(int* input, int max_r, int min_r);
 void print_reviewtable(REVIEW_TABLE* rt);
-int sort_by_number_desc(void*, void*);
-int sort_by_title_desc(void*, void*);
-int sort_by_genre_desc(void*, void*);
-int sort_by_story_score_desc(void*, void*);
-int sort_by_music_score_desc(void*, void*);
-int sort_by_casting_score_desc(void*, void*);
-int sort_by_timer_desc(void*, void*);
-int sort_by_number_asc(void*, void*);
-int sort_by_title_asc(void*, void*);
-int sort_by_genre_asc(void*, void*);
-int sort_by_story_score_asc(void*, void*);
-int sort_by_music_score_asc(void*, void*);
-int sort_by_casting_score_asc(void*, void*);
-int sort_by_timer_asc(void*, void*);
+int sort_by_number_desc(const void*, const void*);
+int sort_by_title_desc(const void*, const void*);
+int sort_by_genre_desc(const void*, const void*);
+int sort_by_story_score_desc(const void*, const void*);
+int sort_by_music_score_desc(const void*, const void*);
+int sort_by_casting_score_desc(const void*, const void*);
+int sort_by_timer_desc(const void*, const void*);
+int sort_by_number_asc(const void*, const void*);
+int sort_by_title_asc(const void*, const void*);
+int sort_by_genre_asc(const void*, const void*);
+int sort_by_story_score_asc(const void*, const void*);
+int sort_by_music_score_asc(const void*, const void*);
+int sort_by_casting_score_asc(const void*, const void*);
+int sort_by_timer_asc(const void*, const void*);
 void same(REVIEW_TABLE* rt, int n, char* g, int s);
 void print_review(REVIEW* a, int index);
 void print_selectreview(REVIEW* a);
@@ -56,12 +56,12 @@ int format_width_count(char* s, int width);
 REVIEW* fc(REVIEW_TABLE* rt);
 REVIEW* fi(REVIEW_TABLE* rt, int index);
 void write_to_file(char* file_location, REVIEW_TABLE* m, REVIEW_TABLE* a);
+void memory_reallocation(REVIEW_TABLE* rt);
 
 int main(int argc, char* argv[]) {
 		REVIEW_TABLE m, a;
 		REVIEW temp;
 		REVIEW_TABLE* sel;
-		int sorted_m[AN];
 		FILE *fp;
 		int user_choice, user_choice2;
 		int i;
@@ -70,9 +70,17 @@ int main(int argc, char* argv[]) {
 		char s_genre[GENRE_BYTE];
 		int s_score;
 
-		int (*sort_method_array[2][7])(void*, void*) = {{sort_by_number_desc, sort_by_title_desc, sort_by_genre_desc, sort_by_story_score_desc, sort_by_music_score_desc, sort_by_casting_score_desc, sort_by_timer_desc}, {sort_by_number_asc, sort_by_title_asc, sort_by_genre_asc, sort_by_story_score_asc, sort_by_music_score_asc, sort_by_casting_score_asc, sort_by_timer_asc}};
+		int (*sort_method_array[2][7])(const void*, const void*) = {{sort_by_number_desc, sort_by_title_desc, sort_by_genre_desc, sort_by_story_score_desc, sort_by_music_score_desc, sort_by_casting_score_desc, sort_by_timer_desc}, {sort_by_number_asc, sort_by_title_asc, sort_by_genre_asc, sort_by_story_score_asc, sort_by_music_score_asc, sort_by_casting_score_asc, sort_by_timer_asc}};
 		char user_criteria[7][20] = {"번호", "제목", "장르", "스토리점수", "음악점수", "캐스팅점수", "저장날짜"};
 		
+		m.t = (REVIEW*)malloc(sizeof(REVIEW));
+		a.t = (REVIEW*)malloc(sizeof(REVIEW));
+		if (m.t == NULL || a.t == NULL) {
+				printf("메모리가 부족해서 프로그램을 종료합니다.\n");
+				getchar();
+				exit(1);
+		}
+
 		if (argc == 1)		
 				strcpy(file_location, "M_data.dat");
 		else 
@@ -83,9 +91,11 @@ int main(int argc, char* argv[]) {
 		if (fp != NULL) {
 				fread(&count, sizeof(int), 1, fp);
 				m.count = count;
+				memory_reallocation(&m);
 				fread(m.t, sizeof(REVIEW), count, fp);
 				fread(&count, sizeof(int), 1, fp);
 				a.count = count;
+				memory_reallocation(&a);
 				fread(a.t, sizeof(REVIEW), count, fp);
 				fclose(fp);
 		}
@@ -135,6 +145,7 @@ int main(int argc, char* argv[]) {
 						if(user_choice == 1) {
 								sel->count++;
 								write_to_file(file_location, &m, &a);
+								memory_reallocation(sel);
 						}
 						else if(user_choice == 2) {	
 						}	
@@ -275,6 +286,8 @@ int main(int argc, char* argv[]) {
 						printf("추천하는 목록은 --- 입니다.");
 				}
 				else if(user_choice == 4) { // 프로그램 종료페이지 - 1.4
+						free(m.t);
+						free(a.t);
 						break;
 				}
 		}
@@ -323,59 +336,59 @@ void print_reviewtable(REVIEW_TABLE* rt) { //감상문테이블을 화면으로 
 		printf("\n");
 }
 
-int sort_by_number_desc(void* a, void* b) {
+int sort_by_number_desc(const void* a, const void* b) {
 	return ((REVIEW*)a)->number < ((REVIEW*)b)->number;
 }
 
-int sort_by_title_desc(void* a, void* b) {
+int sort_by_title_desc(const void* a, const void* b) {
 	return strcmp(((REVIEW*)a)->title, ((REVIEW*)b)->title) < 0;
 }
 
-int sort_by_genre_desc(void* a, void* b) {
+int sort_by_genre_desc(const void* a, const void* b) {
 	return strcmp(((REVIEW*)a)->genre, ((REVIEW*)b)->genre) < 0;
 }
 
-int sort_by_story_score_desc(void* a, void* b) {
+int sort_by_story_score_desc(const void* a, const void* b) {
 	return ((REVIEW*)a)->story_score < ((REVIEW*)b)->story_score;
 }
 
-int sort_by_music_score_desc(void* a, void* b) {
+int sort_by_music_score_desc(const void* a, const void* b) {
 	return ((REVIEW*)a)->music_score < ((REVIEW*)b)->music_score;
 }
 
-int sort_by_casting_score_desc(void* a, void* b) {
+int sort_by_casting_score_desc(const void* a, const void* b) {
 	return ((REVIEW*)a)->casting_score < ((REVIEW*)b)->casting_score;
 }
 
-int sort_by_timer_desc(void* a, void* b) {
+int sort_by_timer_desc(const void* a, const void* b) {
 	return ((REVIEW*)a)->timer < ((REVIEW*)b)->timer;
 }
 
-int sort_by_number_asc(void* a, void* b) {
+int sort_by_number_asc(const void* a, const void* b) {
 	return ((REVIEW*)a)->number > ((REVIEW*)b)->number;
 }
 
-int sort_by_title_asc(void* a, void* b) {
+int sort_by_title_asc(const void* a, const void* b) {
 	return strcmp(((REVIEW*)a)->title, ((REVIEW*)b)->title) > 0;
 }
 
-int sort_by_genre_asc(void* a, void* b) {
+int sort_by_genre_asc(const void* a, const void* b) {
 	return strcmp(((REVIEW*)a)->genre, ((REVIEW*)b)->genre) > 0;
 }
 
-int sort_by_story_score_asc(void* a, void* b) {
+int sort_by_story_score_asc(const void* a, const void* b) {
 	return ((REVIEW*)a)->story_score > ((REVIEW*)b)->story_score;
 }
 
-int sort_by_music_score_asc(void* a, void* b) {
+int sort_by_music_score_asc(const void* a, const void* b) {
 	return ((REVIEW*)a)->music_score > ((REVIEW*)b)->music_score;
 }
 
-int sort_by_casting_score_asc(void* a, void* b) {
+int sort_by_casting_score_asc(const void* a, const void* b) {
 	return ((REVIEW*)a)->casting_score > ((REVIEW*)b)->casting_score;
 }
 
-int sort_by_timer_asc(void* a, void* b) {
+int sort_by_timer_asc(const void* a, const void* b) {
 	return ((REVIEW*)a)->timer > ((REVIEW*)b)->timer;
 }
 
@@ -488,3 +501,13 @@ void write_to_file(char* file_location, REVIEW_TABLE* m, REVIEW_TABLE* a) {
 		fwrite(a->t, sizeof(REVIEW), a->count, fp);
 		fclose(fp);
 }
+
+void memory_reallocation(REVIEW_TABLE* rt) {
+		rt->t = (REVIEW*)realloc(rt->t, (rt->count+1)*sizeof(REVIEW));
+		if (rt->t == NULL) {
+				printf("메모리가 부족해서 프로그램을 종료합니다.\n");
+				getchar();
+				exit(1);
+		}
+}
+
