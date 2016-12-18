@@ -16,6 +16,12 @@
 #define GENRE_BYTE GENRE_LENGTH * KOREAN_BYTE + 1
 #define STORY_BYTE STORY_LENGTH * KOREAN_BYTE + 2
 #define REVIEW_BYTE REVIEW_LENGTH * KOREAN_BYTE + 2
+
+#define op_send 0
+#define op_receive 1
+#define op_desc_sort 2
+#define op_asc_sort 3
+#define op_same 4
 #define DIV 10
 
 typedef struct REVIEW {
@@ -60,30 +66,24 @@ int same_by_music_score(const REVIEW* a, const char* user_genre);
 int same_by_casting_score(const REVIEW* a, const char* user_genre);
 int count_korean_char(char* s);
 int format_width_count(char* s, int width);
-REVIEW* fc(REVIEW_TABLE* rt);
-REVIEW* fi(REVIEW_TABLE* rt, int index);
 void write_to_file(char* file_location, REVIEW_TABLE* m, REVIEW_TABLE* a);
-void memory_reallocation(REVIEW_TABLE* rt);
+void memory_reallocation(REVIEW_TABLE* rt, int count);
 void init_reviewtable (REVIEW_TABLE* rt);
-void send_reviewtable (int connfd, REVIEW_TABLE* rt);
+void send_REVIEW_TABLE (int connfd, REVIEW_TABLE* rt);
 
 int main(int argc, char* argv[]) {
 		REVIEW_TABLE m, a;
-		REVIEW temp;
 		REVIEW_TABLE* sel;
 		int listenfd, connfd;
 		FILE *fp;
-		int user_choice, user_choice2;
 		int i;
 		int count = 0;
 		char file_location[80];
-		char s_genre[GENRE_BYTE];
-		int s_score;
 		socklen_t clilen;
 		struct sockaddr_in cliaddr, servaddr;
 
-		int (*sort_method_array[2][7])(const void*, const void*) = {{sort_by_number_desc, sort_by_title_desc, sort_by_genre_desc, sort_by_story_score_desc, sort_by_music_score_desc, sort_by_casting_score_desc, sort_by_timer_desc}, {sort_by_number_asc, sort_by_title_asc, sort_by_genre_asc, sort_by_story_score_asc, sort_by_music_score_asc, sort_by_casting_score_asc, sort_by_timer_asc}};
-
+		int (*desc_sort_array[7])(const void*, const void*) = {sort_by_number_desc, sort_by_title_desc, sort_by_genre_desc, sort_by_story_score_desc, sort_by_music_score_desc, sort_by_casting_score_desc, sort_by_timer_desc};
+		int (*asc_sort_array[7])(const void*, const void*) = {sort_by_number_asc, sort_by_title_asc, sort_by_genre_asc, sort_by_story_score_asc, sort_by_music_score_asc, sort_by_casting_score_asc, sort_by_timer_asc};
 		int (*same_method_array[4])(const REVIEW*, const char*) = {same_by_genre, same_by_story_score, same_by_music_score, same_by_casting_score};
 
 		if(argc < 2) {
@@ -124,11 +124,11 @@ int main(int argc, char* argv[]) {
 				if (fp != NULL) {
 						fread(&count, sizeof(int), 1, fp);
 						m.count = count;
-						memory_reallocation(&m);
+						memory_reallocation(&m, count);
 						fread(m.t, sizeof(REVIEW), count, fp);
 						fread(&count, sizeof(int), 1, fp);
 						a.count = count;
-						memory_reallocation(&a);
+						memory_reallocation(&a, count);
 						fread(a.t, sizeof(REVIEW), count, fp);
 						fclose(fp);
 				}
@@ -139,22 +139,47 @@ int main(int argc, char* argv[]) {
 				while(1) { //첫화면 - 1
 						read(connfd, &req, sizeof(req));
 						printf("user request %d\n", req.op_code);
-
 						REVIEW_TABLE selected;
-						int op1 = req.op_code / DIV;
-						int op2 = req.op_code % DIV;
+						int op1, op2;
+						if (req.op_code < 100) {
+								sel = &m;
+								op1 = req.op_code / DIV;
+								op2 = req.op_code % DIV;
+						}
+						else {
+								sel = &a;
+								op1 = (req.op_code / DIV)-DIV;
+								op2 = req.op_code % DIV;
+						}
+
 						switch(op1) {
-								case 0:
-										send_reviewtable(connfd, &m);
+								case op_send:
+										send_REVIEW_TABLE(connfd, sel);
 								break;
-								case 1: 
+								case op_receive:
+										free(sel->t);
+										sel->count = 0;
+										read(connfd, &(sel->count), sizeof(int));
+										sel->t = (REVIEW*) malloc(sizeof(REVIEW)*sel->count);
+										read(connfd, sel->t, sizeof(REVIEW)*sel->count);
+										write_to_file(file_location, &m, &a);
+								break;
+								case op_desc_sort:
+										qsort((void*)sel->t, sel->count, sizeof(REVIEW), desc_sort_array[op2]);
+										send_REVIEW_TABLE(connfd, sel);
+										qsort((void*)sel->t, sel->count, sizeof(REVIEW), asc_sort_array[0]);
+								break;
+								case op_asc_sort:
+										qsort((void*)sel->t, sel->count, sizeof(REVIEW), asc_sort_array[op2]);
+										send_REVIEW_TABLE(connfd, sel);
+										qsort((void*)sel->t, sel->count, sizeof(REVIEW), asc_sort_array[0]);
+								break;
+								case op_same: 
 										init_reviewtable(&selected);
-										select_review(&m, &selected, same_method_array[op2], req.arg);
-										send_reviewtable(connfd, &selected);
+										select_review(sel, &selected, same_method_array[op2], req.arg);
+										send_REVIEW_TABLE(connfd, &selected);
 										free(selected.t);
 								break;
-
-
 						}
 				}
 		}
@@ -219,12 +244,13 @@ int sort_by_timer_asc(const void* a, const void* b) {
 
 void select_review(const REVIEW_TABLE* a, REVIEW_TABLE* b, int (*fp)(const REVIEW*, const char*), const char* user_input) {
 		int i;
+		b->count = 0;
 
 		for (i=0; i<a->count; i++) {
 				if(fp(&(a->t[i]), user_input)) {
 						b->t[b->count] = a->t[i];
 						b->count++;
-						memory_reallocation(b);
+						memory_reallocation(b, b->count+1);
 				}
 		}
 }
@@ -260,14 +286,6 @@ int format_width_count(char* s, int width) {
 		return byte3count + width;
 }
 
-REVIEW* fc(REVIEW_TABLE* rt) {
-		return &(rt->t[rt->count]);
-}
-
-REVIEW* fi(REVIEW_TABLE* rt, int index) {
-		return &(rt->t[index]);
-}
-
 void write_to_file(char* file_location, REVIEW_TABLE* m, REVIEW_TABLE* a) {
 		FILE *fp;
 		fp = fopen(file_location, "wb");
@@ -279,8 +297,8 @@ void write_to_file(char* file_location, REVIEW_TABLE* m, REVIEW_TABLE* a) {
 		fclose(fp);
 }
 
-void memory_reallocation(REVIEW_TABLE* rt) {
-		rt->t = (REVIEW*)realloc(rt->t, (rt->count+1)*sizeof(REVIEW));
+void memory_reallocation(REVIEW_TABLE* rt, int count) {
+		rt->t = (REVIEW*)realloc(rt->t, count*sizeof(REVIEW));
 		if (rt->t == NULL) {
 				printf("메모리가 부족해서 프로그램을 종료합니다.\n");
 				getchar();
@@ -293,7 +311,7 @@ void init_reviewtable (REVIEW_TABLE* rt) {
 		rt->count = 0;
 }
 
-void send_reviewtable (int connfd, REVIEW_TABLE* rt) {
+void send_REVIEW_TABLE (int connfd, REVIEW_TABLE* rt) {
 		write(connfd, &(rt->count), sizeof(int));
 		write(connfd, rt->t, sizeof(REVIEW)*rt->count);
 }

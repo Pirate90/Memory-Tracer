@@ -6,17 +6,23 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <time.h>
+
 #define KOREAN_WIDTH 2
 #define KOREAN_BYTE 3
 #define TITLE_LENGTH 10
 #define GENRE_LENGTH 4
 #define STORY_LENGTH 50
 #define REVIEW_LENGTH 500
-
 #define TITLE_BYTE TITLE_LENGTH * KOREAN_BYTE + 2
 #define GENRE_BYTE GENRE_LENGTH * KOREAN_BYTE + 1
 #define STORY_BYTE STORY_LENGTH * KOREAN_BYTE + 2
 #define REVIEW_BYTE REVIEW_LENGTH * KOREAN_BYTE + 2
+
+#define op_send 0
+#define op_receive 1
+#define op_desc_sort 2
+#define op_asc_sort 3
+#define op_same 4
 #define DIV 10
 
 typedef struct REVIEW {
@@ -43,25 +49,23 @@ typedef struct REQUEST {
 char* timeToString(struct tm* t);
 void get_input_range(int* input, int max_r, int min_r);
 void print_reviewtable(REVIEW_TABLE* rt);
-void same(REVIEW_TABLE* rt, int n, char* g, int s);
-void print_review(REVIEW* a, int index);
 void print_selectreview(REVIEW* a);
 void print_star(int score);
 int count_korean_char(char* s);
 int format_width_count(char* s, int width);
 REVIEW* fc(REVIEW_TABLE* rt);
 REVIEW* fi(REVIEW_TABLE* rt, int index);
-void memory_reallocation(REVIEW_TABLE* rt);
+void send_REVIEW_TABLE (int sockfd, REVIEW_TABLE* rt);
 
 int main(int argc, char* argv[]) {
 		REVIEW_TABLE rt;
 		REVIEW temp;
 		REVIEW_TABLE* sel = &rt;
+		REQUEST req;
 		int user_choice, user_choice2;
+		int sel_m_a;
 		int i;
 		int count = 0;
-		char s_genre[GENRE_BYTE];
-		int s_score;
 
 		char user_criteria[7][20] = {"번호", "제목", "장르", "스토리점수", "음악점수", "캐스팅점수", "저장날짜"};
 		
@@ -78,6 +82,9 @@ int main(int argc, char* argv[]) {
 		connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
 		while(1) { //첫화면 - 1
+				req.op_code = 0;
+				req.arg[0] = '\0';
+				
 				printf("Memory Tracer에 오신것을 환영합니다.\n");
 				printf("메뉴를 선택하세요.\n");
 				printf("1. 새로운 감상문 입력하기\n");
@@ -92,12 +99,17 @@ int main(int argc, char* argv[]) {
 						printf("1. 영화감상문 입력\n2. 애니메이션 감상문 입력\n");
 						get_input_range(&user_choice, 2, 1);
 
-//						if(user_choice == 1)
-//								sel = &m;
-//						else
-//								sel = &a;
-						REVIEW* mar = fc(sel);
+						if(user_choice == 1)
+								sel_m_a = 0;
+						else
+								sel_m_a = 100;
 
+						req.op_code = op_send*DIV + sel_m_a;
+						write(sockfd, &req, sizeof(req));
+						read(sockfd, &(sel->count), sizeof(int));
+						sel->t = (REVIEW*)malloc(sizeof(REVIEW)*(sel->count + 1));
+						read(sockfd, sel->t, sizeof(REVIEW)*sel->count);
+						REVIEW* mar = fc(sel);
 						mar->number = sel->count + 1;
 						printf("제목을 입력하세요 (단, 한글 10자 이내) : ");
 						fgets(mar->title, TITLE_BYTE, stdin);
@@ -120,23 +132,24 @@ int main(int argc, char* argv[]) {
 						get_input_range(&user_choice, 2, 1);
 
 						if(user_choice == 1) {
-								sel->count++;
-								memory_reallocation(sel);
+								sel->count ++;
+								req.op_code = op_receive*DIV + sel_m_a;
+								write(sockfd, &req, sizeof(req));
+								send_REVIEW_TABLE(sockfd, sel);
 						}
 						else if(user_choice == 2) {	
-						}	
+						}
+						free(sel->t);
 				}
 				else if(user_choice == 2) { //감상문 관리페이지 - 1.2
 						printf("1. 영화감상문 목록으로\n2. 애니메이션 감상문 목록으로\n");
 						get_input_range(&user_choice, 2, 1);
-//						if(user_choice == 1)
-//								sel = &m;
-//						else
-//								sel = &a;
+						if(user_choice == 1)
+								sel_m_a = 0;
+						else
+								sel_m_a = 100;
 
-//						qsort((void*)sel->t, sel->count, sizeof(REVIEW), sort_method_array[1][0]);
-						REQUEST req;
-						req.op_code = 0;
+						req.op_code = op_send*DIV + sel_m_a;
 						write(sockfd, &req, sizeof(req));
 						read(sockfd, &(sel->count), sizeof(int));
 						sel->t = (REVIEW*)malloc(sizeof(REVIEW)*sel->count);
@@ -157,20 +170,35 @@ int main(int argc, char* argv[]) {
 										printf("1. 정렬하기(번호, 제목, 장르, 스토리점수, 음악점수, 캐스팅점수, 저장날짜)\n");
 										printf("2. 모아보기(장르, 스토리점수, 음악점수, 캐스팅점수)\n");
 										get_input_range(&user_choice, 2, 1);
+
 										if (user_choice == 1) {
 												printf("기준으로 정렬할 항목을 적어주세요.\n");
 												printf("1. 번호\n2. 제목\n3. 장르\n4. 스토리점수\n5. 음악점수\n6. 캐스팅점수\n7. 저장날짜\n");
 												get_input_range(&user_choice, 7, 1);
 												printf("%s을(를) 기준으로 정렬합니다.\n1. 내림차순\n2. 오름차순\n", user_criteria[user_choice-1]);
 												get_input_range(&user_choice2, 2, 1);
-												//qsort((void*)sel->t, sel->count, sizeof(REVIEW), sort_method_array[user_choice2-1][user_choice-1]);
+												if (user_choice2 == 1) {
+														req.op_code = (op_desc_sort*DIV) + user_choice - 1 + sel_m_a;
+														write(sockfd, &req, sizeof(req));
+														read(sockfd, &(sel->count), sizeof(int));
+														sel->t = (REVIEW*)malloc(sizeof(REVIEW)*sel->count);
+														read(sockfd, sel->t, sizeof(REVIEW)*sel->count);
+												}
+												else {
+														req.op_code = (op_asc_sort*DIV) + user_choice - 1 + sel_m_a;
+														write(sockfd, &req, sizeof(req));
+														read(sockfd, &(sel->count), sizeof(int));
+														sel->t = (REVIEW*)malloc(sizeof(REVIEW)*sel->count);
+														read(sockfd, sel->t, sizeof(REVIEW)*sel->count);
+												}
 												print_reviewtable(sel);
+												free(sel->t);
 										}
 										else if (user_choice == 2) {
 												printf("같은 값으로 모아볼 항목을 적어주세요.\n");
 												printf("1. 장르\n2. 스토리점수\n3. 음악점수\n4. 캐스팅점수\n");
 												get_input_range(&user_choice, 4, 1);
-												req.op_code = 10 + user_choice - 1;
+												req.op_code = (op_same*DIV) + user_choice - 1 + sel_m_a;
 												printf("모아 볼 %s을(를) 적어주세요.\n", user_criteria[user_choice + 1]);
 												scanf("%s", req.arg);
 												write(sockfd, &req, sizeof(req));
@@ -182,8 +210,12 @@ int main(int argc, char* argv[]) {
 										}
 								}
 								else if (user_choice == 2) { //선택감상문 보는페이지 - 1.2.2 
-										//qsort((void*)sel->t, sel->count, sizeof(REVIEW), sort_method_array[1][0]);
 										printf("자세히 보고 싶은 감상문의 번호를 적어주세요.\n");
+										req.op_code = op_send*DIV + sel_m_a;
+										write(sockfd, &req, sizeof(req));
+										read(sockfd, &(sel->count), sizeof(int));
+										sel->t = (REVIEW*)malloc(sizeof(REVIEW)*(sel->count));
+										read(sockfd, sel->t, sizeof(REVIEW)*sel->count);
 										get_input_range(&user_choice, sel->count, 1);
 										user_choice = user_choice - 1;
 										print_selectreview(fi(sel, user_choice));
@@ -193,13 +225,18 @@ int main(int argc, char* argv[]) {
 												print_reviewtable(sel);
 										}
 										else if (user_choice == 2) break;
+										free(sel->t);
 								}
 								else if (user_choice == 3) { //선택감상문 편집페이지 - 1.2.3
-										//qsort((void*)sel->t, sel->count, sizeof(REVIEW), sort_method_array[1][0]);
 										printf("편집하고 싶은 감상문의 번호를 적어주세요.\n");
+										req.op_code = op_send*DIV + sel_m_a;
+										write(sockfd, &req, sizeof(req));
+										read(sockfd, &(sel->count), sizeof(int));
+										sel->t = (REVIEW*)malloc(sizeof(REVIEW)*(sel->count));
+										read(sockfd, sel->t, sizeof(REVIEW)*sel->count);
 										get_input_range(&user_choice, sel->count, 1);
 										temp.number = user_choice;
-										user_choice = user_choice -1;
+										user_choice = user_choice - 1;
 										REVIEW* ucr = fi(sel, user_choice);
 										printf("제목을 입력하세요 (단, 한글 10자 이내) : (이전에 입력한 내용: %s) ", ucr->title);
 										fgets(temp.title, TITLE_BYTE, stdin);
@@ -223,14 +260,22 @@ int main(int argc, char* argv[]) {
 
 										if(i == 1) {
 												*ucr = temp;
+												req.op_code = op_receive*DIV + sel_m_a;
+												write(sockfd, &req, sizeof(req));
+												send_REVIEW_TABLE(sockfd, sel);
 										}
 										else if(i == 2) {	
 										}
 										print_reviewtable(sel);
+										free(sel->t);
 								}
 								else if (user_choice == 4) { //선택감상문 삭제페이지 - 1.2.4
-										//qsort((void*)sel->t, sel->count, sizeof(REVIEW), sort_method_array[1][0]);
 										printf("삭제하고 싶은 감상문의 번호를 적어주세요.\n");
+										req.op_code = op_send*DIV + sel_m_a;
+										write(sockfd, &req, sizeof(req));
+										read(sockfd, &(sel->count), sizeof(int));
+										sel->t = (REVIEW*)malloc(sizeof(REVIEW)*(sel->count));
+										read(sockfd, sel->t, sizeof(REVIEW)*sel->count);
 										get_input_range(&user_choice, sel->count, 1);
 										REVIEW* ucr = fi(sel, user_choice);
 										printf("%s을(를) 선택하셨습니다.\n1. 삭제하겠습니다.\n2. 취소하겠습니다.", (ucr-1)->title);
@@ -242,10 +287,15 @@ int main(int argc, char* argv[]) {
 														(ucr-1+i)->number = (ucr-1+i)->number - 1;
 												}
 												sel->count --;
+												req.op_code = op_receive*DIV + sel_m_a;
+												write(sockfd, &req, sizeof(req));
+												send_REVIEW_TABLE(sockfd, sel);
+
 										}
 										else if(i == 2) {	
 										}
 										print_reviewtable(sel);
+										free(sel->t);
 								}
 								else if (user_choice == 5) { //메인화면으로 이동페이지 - 1.2.5
 										break;
@@ -304,60 +354,6 @@ void print_reviewtable(REVIEW_TABLE* rt) { //감상문테이블을 화면으로 
 		printf("\n");
 }
 
-void same(REVIEW_TABLE* rt, int n, char* g, int s) {
-		int count = rt->count;
-		REVIEW* a = rt->t;
-		int i;
-		printf("\n|%-8s|%-22s|%-10s|%-15s|%-14s|%-15s|%s\n","번호","제목","장르","스토리점수","음악점수","캐스팅점수","저장날짜");
-		switch (n) {
-				case 0:
-						for (i=0; i<count; i++) {
-								if (strcmp(g, a[i].genre) == 0) {
-										print_review(a, i);
-								}
-						}
-						break;
-				case 1:
-						for (i=0; i<count; i++) {
-								if (s == a[i].story_score) {
-										print_review(a, i);
-								}
-						}
-						break;
-				case 2:
-						for (i=0; i<count; i++) {
-								if (s == a[i].music_score) {
-										print_review(a, i);
-								}
-						}
-						break;
-				case 3:
-						for (i=0; i<count; i++) {
-								if (s == a[i].casting_score) {
-										print_review(a, i);
-								}
-						}
-						break;
-		}
-		printf("\n");
-}
-
-void print_review(REVIEW* a, int index) { //감상문테이블을 화면으로 출력하는 함수
-		struct tm* t;
-		char buf[100];
-
-		sprintf(buf, "|%%-6d|%%-%ds|%%-%ds|", format_width_count(a[index].title, KOREAN_WIDTH * TITLE_LENGTH), format_width_count(a[index].genre, KOREAN_WIDTH * GENRE_LENGTH));
-		printf(buf,a[index].number,a[index].title,a[index].genre);
-		print_star(a[index].story_score);
-		printf("%s", "|");
-		print_star(a[index].music_score);
-		printf("%s", "|");
-		print_star(a[index].casting_score);
-		printf("%s", "|");
-		t = localtime(&(a[index].timer));
-		printf("%s\n", timeToString(t));
-}
-
 void print_selectreview(REVIEW* a) { //특정감상문의 자세한 내용을 화면으로 출력하는 함수
 		struct tm* t;
 		t = localtime(&(a->timer));
@@ -403,12 +399,7 @@ REVIEW* fi(REVIEW_TABLE* rt, int index) {
 		return &(rt->t[index]);
 }
 
-void memory_reallocation(REVIEW_TABLE* rt) {
-		rt->t = (REVIEW*)realloc(rt->t, (rt->count+1)*sizeof(REVIEW));
-		if (rt->t == NULL) {
-				printf("메모리가 부족해서 프로그램을 종료합니다.\n");
-				getchar();
-				exit(1);
-		}
+void send_REVIEW_TABLE (int sockfd, REVIEW_TABLE* rt) {
+		write(sockfd, &(rt->count), sizeof(int));
+		write(sockfd, rt->t, sizeof(REVIEW)*rt->count);
 }
-
