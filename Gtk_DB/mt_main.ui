@@ -1,0 +1,1447 @@
+<interface>
+	<object id="window" class="GtkWindow">
+		<property name="visible">True</property>
+		<property name="title">INPUT</property>
+		<property name="border-width">10</property>
+		<child>
+			<object id="stack" class="GtkStack">
+				<property name="visible">True</property>
+				<property name="visible_child">main_fixed</property>
+				<child>
+					<object id="main_fixed" class="GtkFixed">
+						<property name="visible">True</property>
+						<child>
+							<object id="m_a_box" class="GtkBox">
+								<property name="visible">True</property>
+								<property name="spacing">10</property>
+								<child>
+									<object id="m_toggle" class="GtkToggleButton">
+										<property name="visible">True</property>
+										<property name="label">영화</property>
+										<property name="active">True</property>
+										<signal name="toggled" handler="m_a_togglebutton_toggled"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="a_toggle" class="GtkToggleButton">
+										<property name="visible">True</property>
+										<property name="label">애니</property>
+										<signal name="toggled" handler="m_a_togglebutton_toggled"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="x">10</property>
+								<property name="y">10</property>
+							</packing>
+						</child>
+						<child>
+							<object id="main_grid" class="GtkGrid">
+								<property name="visible">True</property>
+								<child>
+									<object id="input_button" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">감상문입력하기</property>
+										<signal name="clicked" handler="input_button_clicked"/>
+									</object>
+									<packing>	
+										<property name="left-attach">0</property>
+										<property name="top-attach">0</property>
+									</packing>
+								</child>
+								<child>
+									<object id="table_button" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">목록보기/편집하기</property>
+										<signal name="clicked" handler="table_button_clicked"/>
+									</object>
+									<packing>	
+										<property name="left-attach">0</property>
+										<property name="top-attach">1</property>
+									</packing>
+								</child>
+								<child>
+									<object id="recom_button" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">추천메뉴보기</property>
+										<signal name="clicked" handler="recom_button_clicked"/>
+									</object>
+									<packing>	
+										<property name="left-attach">0</property>
+										<property name="top-attach">2</property>
+									</packing>
+								</child>
+								<child>
+									<object id="quit_button" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">종료하기</property>
+										<signal name="clicked" handler="quit_button_clicked"/>
+									</object>
+									<packing>	
+										<property name="left-attach">0</property>
+										<property name="top-attach">3</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="x">300</property>
+								<property name="y">10</property>
+							</packing>
+						</child>
+						<child>
+							<object id="main_image" class="GtkImage">
+								<property name="visible">True</property>
+								<property name="pixbuf">images.bmp</property>
+							</object>
+							<packing>
+								<property name="x">10</property>
+								<property name="y">50</property>
+							</packing>
+						</child>
+					</object>
+				</child>
+				<child>
+					<object id="input_grid" class="GtkGrid">
+						<property name="visible">True</property>
+						<property name="row-spacing">5</property>
+						<child>
+							<object id="title_input_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="title_input_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Title</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="title_input_entry" class="GtkEntry">
+										<property name="visible">True</property>
+										<property name="max_length">10</property>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">0</property>
+							</packing>
+						</child>
+						<child>
+							<object id="genre_input_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="genre_input_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Genre</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="genre_input_entry" class="GtkEntry">
+										<property name="visible">True</property>
+										<property name="max_length">10</property>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">1</property>
+							</packing>
+						</child>
+						<child>
+							<object id="sscore_input_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="sscore_input_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Story_score</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="sscore_input_box" class="GtkBox">
+										<property name="visible">True</property>
+										<child>
+											<object id="sscore_rb0" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">0점</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_rb1" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">1점</property>
+												<property name="group">sscore_rb0</property>
+											</object>
+										</child>	
+										<child>
+											<object id="sscore_rb2" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">2점</property>
+												<property name="group">sscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_rb3" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">3점</property>
+												<property name="group">sscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_rb4" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">4점</property>
+												<property name="group">sscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_rb5" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">5점</property>
+												<property name="group">sscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_rb6" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">6점</property>
+												<property name="group">sscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_rb7" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">7점</property>
+												<property name="group">sscore_rb0</property>
+											</object>
+										</child>	
+										<child>
+											<object id="sscore_rb8" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">8점</property>
+												<property name="group">sscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_rb9" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">9점</property>
+												<property name="group">sscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_rb10" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">10점</property>
+												<property name="group">sscore_rb0</property>
+											</object>
+										</child>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">2</property>
+							</packing>
+						</child>
+						<child>
+							<object id="mscore_input_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="mscore_input_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Music_score</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="mscore_input_box" class="GtkBox">
+										<property name="visible">True</property>
+										<child>
+											<object id="mscore_rb0" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">0점</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_rb1" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">1점</property>
+												<property name="group">mscore_rb0</property>
+											</object>
+										</child>	
+										<child>
+											<object id="mscore_rb2" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">2점</property>
+												<property name="group">mscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_rb3" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">3점</property>
+												<property name="group">mscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_rb4" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">4점</property>
+												<property name="group">mscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_rb5" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">5점</property>
+												<property name="group">mscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_rb6" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">6점</property>
+												<property name="group">mscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_rb7" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">7점</property>
+												<property name="group">mscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_rb8" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">8점</property>
+												<property name="group">mscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_rb9" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">9점</property>
+												<property name="group">mscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_rb10" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">10점</property>
+												<property name="group">mscore_rb0</property>
+											</object>
+										</child>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">3</property>
+							</packing>
+						</child>
+						<child>
+							<object id="cscore_input_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="cscore_input_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Casting_score</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="cscore_input_box" class="GtkBox">
+										<property name="visible">True</property>
+										<child>
+											<object id="cscore_rb0" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">0점</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_rb1" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">1점</property>
+												<property name="group">cscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_rb2" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">2점</property>
+												<property name="group">cscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_rb3" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">3점</property>
+												<property name="group">cscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_rb4" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">4점</property>
+												<property name="group">cscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_rb5" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">5점</property>
+												<property name="group">cscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_rb6" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">6점</property>
+												<property name="group">cscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_rb7" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">7점</property>
+												<property name="group">cscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_rb8" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">8점</property>
+												<property name="group">cscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_rb9" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">9점</property>
+												<property name="group">cscore_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_rb10" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">10점</property>
+												<property name="group">cscore_rb0</property>
+											</object>
+										</child>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">4</property>
+							</packing>
+						</child>
+						<child>
+							<object id="story_input_fixed" class="GtkFixed">
+								<property name="visible">True</property>	
+								<child>
+									<object id="story_input_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Story</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="story_input_textview" class="GtkTextView">
+										<property name="visible">True</property>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">5</property>
+							</packing>
+						</child>
+						<child>
+							<object id="review_input_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="review_input_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Review</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="review_input_textview" class="GtkTextView">
+										<property name="visible">True</property>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">6</property>
+							</packing>
+						</child>
+						<child>
+							<object id="control_input_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="control_input_grid" class="GtkGrid">
+										<property name="visible">True</property>
+										<property name="column-spacing">10</property>
+										<child>
+											<object id="save_input_button" class="GtkButton">
+												<property name="visible">True</property>
+												<property name="label">Save</property>
+												<signal name="clicked" handler="save_input_button_clicked"/>
+											</object>
+										</child>
+										<child>
+											<object id="cancel_input_button" class="GtkButton">
+												<property name="visible">True</property>
+												<property name="label">Cancel</property>
+												<signal name="clicked" handler="return_main_page"/>
+											</object>
+										</child>
+									</object>
+									<packing>
+										<property name="x">200</property>
+										<property name="y">30</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">7</property>
+							</packing>
+						</child>
+					</object>
+				</child>
+				<child>
+					<object id="table_fixed" class="GtkFixed">
+						<property name="visible">True</property>
+						<child>
+							<object id="table_box1" class="GtkBox">
+								<property name="visible">True</property>
+								<child>
+									<object id="sort_id_desc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_id_desc</property>
+										<signal name="clicked" handler="sort_desc" after="1"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_title_desc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_title_desc</property>
+										<signal name="clicked" handler="sort_desc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_genre_desc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_genre_desc</property>
+										<signal name="clicked" handler="sort_desc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_sscore_desc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_sscore_desc</property>
+										<signal name="clicked" handler="sort_desc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_mscore_desc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_mscore_desc</property>
+										<signal name="clicked" handler="sort_desc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_cscore_desc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_cscore_desc</property>
+										<signal name="clicked" handler="sort_desc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_timer_desc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_timer_desc</property>
+										<signal name="clicked" handler="sort_desc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="x">5</property>
+								<property name="y">5</property>
+							</packing>
+						</child>
+						<child>
+							<object id="table_box2" class="GtkBox">
+								<property name="visible">True</property>
+								<child>
+									<object id="sort_id_asc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_id_asc</property>
+										<signal name="clicked" handler="sort_asc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_title_asc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_title_asc</property>
+										<signal name="clicked" handler="sort_asc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_genre_asc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_genre_asc</property>
+										<signal name="clicked" handler="sort_asc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_sscore_asc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_sscore_asc</property>
+										<signal name="clicked" handler="sort_asc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_mscore_asc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_mscore_asc</property>
+										<signal name="clicked" handler="sort_asc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_cscore_asc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_cscore_asc</property>
+										<signal name="clicked" handler="sort_asc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object id="sort_timer_asc" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">sort_timer_asc</property>
+										<signal name="clicked" handler="sort_asc"/>
+									</object>
+									<packing>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkComboBoxText" id="comboboxtext2">
+										<property name="visible">True</property>
+										<items>
+											<item>AA</item>
+											<item>BB</item>
+											<item>CC</item>
+										</items>
+									</object>
+									<packing>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="x">5</property>
+								<property name="y">40</property>
+							</packing>
+						</child>
+						<child>
+							<object id="review_table_listbox" class="GtkListBox">
+								<property name="visible">True</property>
+								<property name="activate-on-single-click">True</property>
+							</object>
+							<packing>
+								<property name="x">5</property>
+								<property name="y">70</property>
+							</packing>
+						</child>
+						<child>
+							<object id="table_grid" class="GtkGrid">
+								<property name="visible">True</property>
+								<child>
+									<object id="table_view_button" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">자세히보기</property>
+										<signal name="clicked" handler="table_view_button"/>
+									</object>
+									<packing>	
+										<property name="left-attach">0</property>
+										<property name="top-attach">0</property>
+									</packing>
+								</child>
+								<child>
+									<object id="table_edit_button" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">편집하기</property>
+										<signal name="clicked" handler="table_edit_button"/>
+									</object>
+									<packing>	
+										<property name="left-attach">0</property>
+										<property name="top-attach">1</property>
+									</packing>
+								</child>
+								<child>
+									<object id="table_del_button" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">삭제하기</property>
+										<signal name="clicked" handler="table_del_button"/>
+									</object>
+									<packing>	
+										<property name="left-attach">0</property>
+										<property name="top-attach">2</property>
+									</packing>
+								</child>
+								<child>
+									<object id="table_quit_button" class="GtkButton">
+										<property name="visible">True</property>
+										<property name="label">메인화면으로</property>
+										<signal name="clicked" handler="return_main_page"/>
+									</object>
+									<packing>	
+										<property name="left-attach">0</property>
+										<property name="top-attach">3</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="x">400</property>
+								<property name="y">20</property>
+							</packing>
+						</child>
+					</object>
+				</child>
+				<child>
+					<object id="view_fixed" class="GtkFixed">
+						<property name="visible">True</property>
+						<child>
+							<object id="id_view_label" class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="label">ID</property>
+							</object>
+							<packing>	
+								<property name="x">5</property>
+								<property name="y">5</property>
+							</packing>
+						</child>
+						<child>
+							<object id="id_view_label2" class="GtkLabel">
+								<property name="visible">True</property>
+							</object>
+							<packing>	
+								<property name="x">100</property>
+								<property name="y">5</property>
+							</packing>
+						</child>
+						<child>
+							<object id="title_view_label" class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="label">Title</property>
+							</object>
+							<packing>	
+								<property name="x">5</property>
+								<property name="y">25</property>
+							</packing>
+						</child>
+						<child>
+							<object id="title_view_label2" class="GtkLabel">
+								<property name="visible">True</property>
+							</object>
+							<packing>	
+								<property name="x">100</property>
+								<property name="y">25</property>
+							</packing>
+						</child>
+						<child>
+							<object id="genre_view_label" class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="label">Gerne</property>
+							</object>
+							<packing>	
+								<property name="x">5</property>
+								<property name="y">45</property>
+							</packing>
+						</child>
+						<child>
+							<object id="genre_view_label2" class="GtkLabel">
+								<property name="visible">True</property>
+							</object>
+							<packing>	
+								<property name="x">100</property>
+								<property name="y">45</property>
+							</packing>
+						</child>
+						<child>
+							<object id="sscore_view_label" class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="label">Story_score</property>
+							</object>
+							<packing>	
+								<property name="x">5</property>
+								<property name="y">65</property>
+							</packing>
+						</child>
+						<child>
+							<object id="sscore_view_label2" class="GtkLabel">
+								<property name="visible">True</property>
+							</object>
+							<packing>	
+								<property name="x">100</property>
+								<property name="y">65</property>
+							</packing>
+						</child>
+						<child>
+							<object id="mscore_view_label" class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="label">Music_score</property>
+							</object>
+							<packing>	
+								<property name="x">5</property>
+								<property name="y">85</property>
+							</packing>
+						</child>
+						<child>
+							<object id="mscore_view_label2" class="GtkLabel">
+								<property name="visible">True</property>
+							</object>
+							<packing>	
+								<property name="x">100</property>
+								<property name="y">85</property>
+							</packing>
+						</child>
+						<child>
+							<object id="cscore_view_label" class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="label">Casting_score</property>
+							</object>
+							<packing>	
+								<property name="x">5</property>
+								<property name="y">105</property>
+							</packing>
+						</child>
+						<child>
+							<object id="cscore_view_label2" class="GtkLabel">
+								<property name="visible">True</property>
+							</object>
+							<packing>	
+								<property name="x">100</property>
+								<property name="y">105</property>
+							</packing>
+						</child>
+						<child>
+							<object id="story_view_label" class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="label">Story</property>
+							</object>
+							<packing>	
+								<property name="x">5</property>
+								<property name="y">125</property>
+							</packing>
+						</child>
+						<child>
+							<object id="story_view_textview" class="GtkTextView">
+								<property name="visible">True</property>
+								<property name="editable">False</property>
+							</object>
+							<packing>
+								<property name="x">100</property>
+								<property name="y">125</property>
+							</packing>
+						</child>
+						<child>
+							<object id="review_view_label" class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="label">Review</property>
+							</object>
+							<packing>	
+								<property name="x">5</property>
+								<property name="y">145</property>
+							</packing>
+						</child>
+						<child>
+							<object id="review_view_textview" class="GtkTextView">
+								<property name="visible">True</property>
+								<property name="editable">False</property>
+							</object>
+							<packing>
+								<property name="x">100</property>
+								<property name="y">145</property>
+							</packing>
+						</child>
+						<child>
+							<object id="savetime_view_label" class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="label">Save time</property>
+							</object>
+							<packing>	
+								<property name="x">5</property>
+								<property name="y">165</property>
+							</packing>
+						</child>
+						<child>
+							<object id="savetime_view_label2" class="GtkLabel">
+								<property name="visible">True</property>
+							</object>
+							<packing>	
+								<property name="x">100</property>
+								<property name="y">165</property>
+							</packing>
+						</child>
+						<child>
+							<object id="view_quit_button" class="GtkButton">
+								<property name="visible">True</property>
+								<property name="label">테이블목록으로</property>
+								<signal name="clicked" handler="return_table_page"/>
+							</object>
+							<packing>	
+								<property name="x">200</property>
+								<property name="y">200</property>
+							</packing>
+						</child>
+					</object>
+				</child>
+				<child>
+					<object id="edit_grid" class="GtkGrid">
+						<property name="visible">True</property>
+						<property name="row-spacing">5</property>
+						<child>
+							<object id="title_edit_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="title_edit_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Title</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="title_edit_entry" class="GtkEntry">
+										<property name="visible">True</property>
+										<property name="max_length">10</property>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">0</property>
+							</packing>
+						</child>
+						<child>
+							<object id="genre_edit_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="genre_edit_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Genre</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="genre_edit_entry" class="GtkEntry">
+										<property name="visible">True</property>
+										<property name="max_length">10</property>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">1</property>
+							</packing>
+						</child>
+						<child>
+							<object id="sscore_edit_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="sscore_edit_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Story_score</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="sscore_edit_box" class="GtkBox">
+										<property name="visible">True</property>
+										<child>
+											<object id="sscore_edit_rb0" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">0점</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_edit_rb1" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">1점</property>
+												<property name="group">sscore_edit_rb0</property>
+											</object>
+										</child>	
+										<child>
+											<object id="sscore_edit_rb2" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">2점</property>
+												<property name="group">sscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_edit_rb3" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">3점</property>
+												<property name="group">sscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_edit_rb4" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">4점</property>
+												<property name="group">sscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_edit_rb5" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">5점</property>
+												<property name="group">sscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_edit_rb6" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">6점</property>
+												<property name="group">sscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_edit_rb7" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">7점</property>
+												<property name="group">sscore_edit_rb0</property>
+											</object>
+										</child>	
+										<child>
+											<object id="sscore_edit_rb8" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">8점</property>
+												<property name="group">sscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_edit_rb9" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">9점</property>
+												<property name="group">sscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="sscore_edit_rb10" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">10점</property>
+												<property name="group">sscore_edit_rb0</property>
+											</object>
+										</child>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">2</property>
+							</packing>
+						</child>
+						<child>
+							<object id="mscore_edit_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="mscore_edit_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Music_score</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="mscore_edit_box" class="GtkBox">
+										<property name="visible">True</property>
+										<child>
+											<object id="mscore_edit_rb0" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">0점</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_edit_rb1" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">1점</property>
+												<property name="group">mscore_edit_rb0</property>
+											</object>
+										</child>	
+										<child>
+											<object id="mscore_edit_rb2" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">2점</property>
+												<property name="group">mscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_edit_rb3" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">3점</property>
+												<property name="group">mscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_edit_rb4" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">4점</property>
+												<property name="group">mscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_edit_rb5" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">5점</property>
+												<property name="group">mscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_edit_rb6" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">6점</property>
+												<property name="group">mscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_edit_rb7" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">7점</property>
+												<property name="group">mscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_edit_rb8" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">8점</property>
+												<property name="group">mscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_edit_rb9" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">9점</property>
+												<property name="group">mscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="mscore_edit_rb10" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">10점</property>
+												<property name="group">mscore_edit_rb0</property>
+											</object>
+										</child>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">3</property>
+							</packing>
+						</child>
+						<child>
+							<object id="cscore_edit_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="cscore_edit_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Casting_score</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="cscore_edit_box" class="GtkBox">
+										<property name="visible">True</property>
+										<child>
+											<object id="cscore_edit_rb0" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">0점</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_edit_rb1" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">1점</property>
+												<property name="group">cscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_edit_rb2" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">2점</property>
+												<property name="group">cscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_edit_rb3" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">3점</property>
+												<property name="group">cscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_edit_rb4" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">4점</property>
+												<property name="group">cscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_edit_rb5" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">5점</property>
+												<property name="group">cscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_edit_rb6" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">6점</property>
+												<property name="group">cscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_edit_rb7" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">7점</property>
+												<property name="group">cscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_edit_rb8" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">8점</property>
+												<property name="group">cscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_edit_rb9" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">9점</property>
+												<property name="group">cscore_edit_rb0</property>
+											</object>
+										</child>
+										<child>
+											<object id="cscore_edit_rb10" class="GtkRadioButton">
+												<property name="visible">True</property>
+												<property name="label">10점</property>
+												<property name="group">cscore_edit_rb0</property>
+											</object>
+										</child>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">4</property>
+							</packing>
+						</child>
+						<child>
+							<object id="story_edit_fixed" class="GtkFixed">
+								<property name="visible">True</property>	
+								<child>
+									<object id="story_edit_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Story</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="story_edit_textview" class="GtkTextView">
+										<property name="visible">True</property>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">5</property>
+							</packing>
+						</child>
+						<child>
+							<object id="review_edit_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="review_edit_label" class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="label">Review</property>
+									</object>
+									<packing>
+										<property name="x">5</property>
+									</packing>
+								</child>
+								<child>
+									<object id="review_edit_textview" class="GtkTextView">
+										<property name="visible">True</property>
+									</object>
+									<packing>
+										<property name="x">100</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">6</property>
+							</packing>
+						</child>
+						<child>
+							<object id="control_edit_fixed" class="GtkFixed">
+								<property name="visible">True</property>
+								<child>
+									<object id="control_edit_grid" class="GtkGrid">
+										<property name="visible">True</property>
+										<property name="column-spacing">10</property>
+										<child>
+											<object id="save_edit_button" class="GtkButton">
+												<property name="visible">True</property>
+												<property name="label">Save</property>
+												<signal name="clicked" handler="save_edit_button_clicked"/>
+											</object>
+										</child>
+										<child>
+											<object id="cancel_edit_button" class="GtkButton">
+												<property name="visible">True</property>
+												<property name="label">Cancel</property>
+												<signal name="clicked" handler="return_table_page"/>
+											</object>
+										</child>
+									</object>
+									<packing>
+										<property name="x">200</property>
+										<property name="y">30</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">7</property>
+							</packing>
+						</child>
+					</object>
+				</child>
+<!-- 				<child>
+					<object id="del_dialog" class="GtkDialog">
+						<property name="visible">True</property>
+						<child>
+							<object id="del_dialog_label" class="GtkLabel">
+								<property name="visible">True</property>
+							</object>
+						</child>
+						<child>
+							<object id="del_yes_button" class="GtkButton">
+								<property name="visible">True</property>
+								<property name="label">YES</property>
+							</object>
+						</child>
+						<child>
+							<object id="del_no_button" class="GtkButton">
+								<property name="visible">True</property>
+								<property name="label">NO</property>
+							</object>
+						</child>
+					</object>
+				</child> -->
+			</object>
+		</child>
+	</object>
+</interface>
